@@ -1,0 +1,20 @@
+{
+  "name": "mansa/mansa-core",
+  "description": "Mansa Core - Content discovery platform core CMS architecture for WordPress",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0-or-later",
+  "authors": [
+    {
+      "name": "Mansa Team",
+      "email": "team@mansa.local"
+    }
+  ],
+  "require": {
+    "php": ">=7.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "Mansa\\": "src/"
+    }
+  }
+}

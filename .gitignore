@@ -1,0 +1,5 @@
+#vendor 
+/vendor/
+
+#node modules
+/node_modules/
