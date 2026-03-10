@@ -55,6 +55,7 @@ class ProductPostType {
 			'show_in_rest'       => true,
 			'rest_base'          => 'products',
 			'supports'           => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields' ),
+			'menu_icon'          => 'dashicons-cart',
 		);
 
 		register_post_type( self::POST_TYPE, $args );

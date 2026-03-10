@@ -25,6 +25,18 @@ class Plugin {
 	protected static $container;
 
 	/**
+	 * Providers array.
+	 *
+	 * @var array
+	 */
+	protected static $providers = array(
+		PostTypeServiceProvider::class,
+		TaxonomyServiceProvider::class,
+		RelationshipServiceProvider::class,
+		AdminServiceProvider::class,
+	);
+
+	/**
 	 * Initialize the plugin.
 	 *
 	 * @return void
@@ -42,14 +54,7 @@ class Plugin {
 	 * @return void
 	 */
 	protected static function register_providers() {
-		$providers = array(
-			PostTypeServiceProvider::class,
-			TaxonomyServiceProvider::class,
-			RelationshipServiceProvider::class,
-			AdminServiceProvider::class,
-		);
-
-		foreach ( $providers as $provider_class ) {
+		foreach ( self::$providers as $provider_class ) {
 			$provider = new $provider_class();
 			$provider->register( self::$container );
 		}
@@ -61,14 +66,7 @@ class Plugin {
 	 * @return void
 	 */
 	protected static function boot_providers() {
-		$providers = array(
-			PostTypeServiceProvider::class,
-			TaxonomyServiceProvider::class,
-			RelationshipServiceProvider::class,
-			AdminServiceProvider::class,
-		);
-
-		foreach ( $providers as $provider_class ) {
+		foreach ( self::$providers as $provider_class ) {
 			$provider = new $provider_class();
 			$provider->boot( self::$container );
 		}

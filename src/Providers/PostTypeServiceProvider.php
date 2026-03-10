@@ -27,23 +27,17 @@ class PostTypeServiceProvider extends ServiceProvider {
 	public function register( Container $container ) {
 		$container->register(
 			ProductPostType::class,
-			function ( $c ) {
-				return new ProductPostType();
-			}
+			fn ( $c ) => new ProductPostType()
 		);
 
 		$container->register(
 			BrandPostType::class,
-			function ( $c ) {
-				return new BrandPostType();
-			}
+			fn ( $c ) => new BrandPostType()
 		);
 
 		$container->register(
 			ArticlePostType::class,
-			function ( $c ) {
-				return new ArticlePostType();
-			}
+			fn ( $c ) => new ArticlePostType()
 		);
 	}
 

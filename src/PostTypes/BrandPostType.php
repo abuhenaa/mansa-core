@@ -55,6 +55,7 @@ class BrandPostType {
 			'show_in_rest'       => true,
 			'rest_base'          => 'brands',
 			'supports'           => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields' ),
+			'menu_icon'          => 'dashicons-store',
 		);
 
 		register_post_type( self::POST_TYPE, $args );

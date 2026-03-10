@@ -55,6 +55,7 @@ class ArticlePostType {
 			'show_in_rest'       => true,
 			'rest_base'          => 'articles',
 			'supports'           => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields' ),
+			'menu_icon'          => 'dashicons-media-document',
 		);
 
 		register_post_type( self::POST_TYPE, $args );

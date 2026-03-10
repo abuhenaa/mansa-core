@@ -75,6 +75,16 @@ class MetaBoxes {
 			'side',
 			'default'
 		);
+
+		// Product where to buy link.
+		add_meta_box(
+			'mansa_product_where_to_buy',
+			__( 'Where to Buy Link', 'mansa-core' ),
+			array( $this, 'render_product_where_to_buy_meta_box' ),
+			ProductPostType::POST_TYPE,
+			'side',
+			'default'
+		);
 	}
 
 	/**
@@ -104,6 +114,7 @@ class MetaBoxes {
 
 		if ( ProductPostType::POST_TYPE === $post_type ) {
 			$this->save_product_brand( $post_id );
+			$this->save_product_where_to_buy( $post_id );
 		} elseif ( ArticlePostType::POST_TYPE === $post_type ) {
 			$this->save_article_relations( $post_id );
 		}
@@ -203,6 +214,29 @@ class MetaBoxes {
 		echo '</select>';
 		echo '<p class="description">' . esc_html__( 'Hold Ctrl/Cmd to select multiple brands.', 'mansa-core' ) . '</p>';
 	}
+
+	/**
+	 * Render product where to buy links meta box.
+	 * @param \WP_Post $post Post object.
+	 * @return void
+	 */
+	public function render_product_where_to_buy_meta_box( $post ) {
+		$current_link = get_post_meta( $post->ID, '_mansa_where_to_buy_link', true );
+		echo '<input type="url" name="mansa_where_to_buy_link" id="mansa_where_to_buy_link" value="' . esc_attr( $current_link ) . '" style="width: 100%;" />';
+		echo '<p class="description">' . esc_html__( 'Enter a URL where customers can buy this product.', 'mansa-core' ) . '</p>';
+	}
+
+	/**
+	 * Save product where to buy link.
+	 */
+	protected function save_product_where_to_buy( $post_id ) {
+		if ( isset( $_POST['mansa_where_to_buy_link'] ) ) {
+			$link = esc_url_raw( $_POST['mansa_where_to_buy_link'] );
+			update_post_meta( $post_id, '_mansa_where_to_buy_link', $link );
+		}
+	}
+
+
 
 	/**
 	 * Save product brand.
