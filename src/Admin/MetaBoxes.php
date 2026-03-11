@@ -76,11 +76,11 @@ class MetaBoxes {
 			'default'
 		);
 
-		// Product where to buy link.
+		// Product related articles.
 		add_meta_box(
-			'mansa_product_where_to_buy',
-			__( 'Where to Buy Link', 'mansa-core' ),
-			array( $this, 'render_product_where_to_buy_meta_box' ),
+			'mansa_product_articles',
+			__( 'Related Articles', 'mansa-core' ),
+			array( $this, 'render_product_articles_meta_box' ),
 			ProductPostType::POST_TYPE,
 			'side',
 			'default'
@@ -115,6 +115,7 @@ class MetaBoxes {
 		if ( ProductPostType::POST_TYPE === $post_type ) {
 			$this->save_product_brand( $post_id );
 			$this->save_product_where_to_buy( $post_id );
+			$this->save_product_articles( $post_id );
 		} elseif ( ArticlePostType::POST_TYPE === $post_type ) {
 			$this->save_article_relations( $post_id );
 		}
@@ -227,6 +228,37 @@ class MetaBoxes {
 	}
 
 	/**
+	 * Render product related articles meta box.
+	 *
+	 * @param \WP_Post $post Post object.
+	 * @return void
+	 */
+	public function render_product_articles_meta_box( $post ) {
+		$current_articles = $this->article_relations->get_articles_by_product( $post->ID );
+
+		$articles = get_posts(
+			array(
+				'post_type'      => ArticlePostType::POST_TYPE,
+				'posts_per_page' => -1,
+				'orderby'        => 'title',
+				'order'          => 'ASC',
+			)
+		);
+
+		echo '<select name="mansa_related_articles[]" id="mansa_related_articles" multiple style="width: 100%; height: 150px;">';
+
+		foreach ( $articles as $article ) {
+			$selected = in_array( $article->ID, $current_articles, true ) ? 'selected' : '';
+			echo '<option value="' . esc_attr( $article->ID ) . '" ' . esc_attr( $selected ) . '>';
+			echo esc_html( $article->post_title );
+			echo '</option>';
+		}
+
+		echo '</select>';
+		echo '<p class="description">' . esc_html__( 'Hold Ctrl/Cmd to select multiple articles.', 'mansa-core' ) . '</p>';
+	}
+
+	/**
 	 * Save product where to buy link.
 	 */
 	protected function save_product_where_to_buy( $post_id ) {
@@ -237,6 +269,24 @@ class MetaBoxes {
 	}
 
 
+
+	/**
+	 * Save related articles for a product.
+	 *
+	 * This keeps the relationship stored on the article side, matching how the
+	 * front-end queries related articles using the ArticleRelations helper.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return void
+	 */
+	protected function save_product_articles( $post_id ) {
+		$selected = isset( $_POST['mansa_related_articles'] ) ? array_map( 'absint', (array) $_POST['mansa_related_articles'] ) : array();
+		$current  = $this->article_relations->get_articles_by_product( $post_id );
+
+		// save it
+		$this->article_relations->set_related_articles( $post_id, $selected );
+		
+	}
 
 	/**
 	 * Save product brand.
@@ -267,5 +317,10 @@ class MetaBoxes {
 			$brand_ids = array_map( 'absint', (array) $_POST['mansa_related_brands'] );
 			$this->article_relations->set_related_brands( $post_id, $brand_ids );
 		}
+
+		// if ( isset( $_POST['mansa_related_articles'] ) ) {
+		// 	$article_ids = array_map( 'absint', (array) $_POST['mansa_related_articles'] );
+		// 	$this->article_relations->set_related_articles( $post_id, $article_ids );
+		// }
 	}
 }

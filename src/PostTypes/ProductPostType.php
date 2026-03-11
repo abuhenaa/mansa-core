@@ -54,7 +54,7 @@ class ProductPostType {
 			'menu_position'      => null,
 			'show_in_rest'       => true,
 			'rest_base'          => 'products',
-			'supports'           => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields' ),
+			'supports'           => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields','gallery' ),
 			'menu_icon'          => 'dashicons-cart',
 		);
 
