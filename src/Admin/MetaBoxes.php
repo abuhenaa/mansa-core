@@ -85,6 +85,26 @@ class MetaBoxes {
 			'side',
 			'default'
 		);
+
+		// Brand founder story.
+		add_meta_box(
+			'mansa_brand_founder_story',
+			__( 'Founder Story', 'mansa-core' ),
+			array( $this, 'render_brand_founder_story_meta_box' ),
+			BrandPostType::POST_TYPE,
+			'normal',
+			'default'
+		);
+
+		// Brand website and social links.
+		add_meta_box(
+			'mansa_brand_contact',
+			__( 'Contact Info', 'mansa-core' ),
+			array( $this, 'render_brand_contact_meta_box' ),
+			BrandPostType::POST_TYPE,
+			'side',
+			'default'
+		);
 	}
 
 	/**
@@ -118,6 +138,8 @@ class MetaBoxes {
 			$this->save_product_articles( $post_id );
 		} elseif ( ArticlePostType::POST_TYPE === $post_type ) {
 			$this->save_article_relations( $post_id );
+		} elseif ( BrandPostType::POST_TYPE === $post_type ) {
+			$this->save_brand_meta( $post_id );
 		}
 	}
 
@@ -322,5 +344,68 @@ class MetaBoxes {
 		// 	$article_ids = array_map( 'absint', (array) $_POST['mansa_related_articles'] );
 		// 	$this->article_relations->set_related_articles( $post_id, $article_ids );
 		// }
+	}
+
+	/**
+	 * Render brand founder story meta box.
+	 *
+	 * @param \WP_Post $post Post object.
+	 * @return void
+	 */
+	public function render_brand_founder_story_meta_box( $post ) {
+		wp_nonce_field( 'mansa_save_meta', 'mansa_meta_nonce' );
+		$founder_story = get_post_meta( $post->ID, '_mansa_brand_founder_story', true );
+		wp_editor( $founder_story, 'mansa_brand_founder_story', array(
+			'textarea_rows' => 6,
+			'media_buttons' => true,
+		) );
+	}
+
+	/**
+	 * Render brand contact info meta box.
+	 *
+	 * @param \WP_Post $post Post object.
+	 * @return void
+	 */
+	public function render_brand_contact_meta_box( $post ) {
+		$website = get_post_meta( $post->ID, '_mansa_brand_website', true );
+		$social = get_post_meta( $post->ID, '_mansa_brand_social', true );
+		?>
+		<p>
+			<label for="mansa_brand_website"><?php esc_html_e( 'Website URL', 'mansa-core' ); ?></label>
+			<input type="url" id="mansa_brand_website" name="mansa_brand_website" value="<?php echo esc_attr( $website ); ?>" style="width: 100%;" />
+		</p>
+		<p>
+			<label for="mansa_brand_social"><?php esc_html_e( 'Social Links', 'mansa-core' ); ?></label>
+			<textarea id="mansa_brand_social" name="mansa_brand_social" rows="4" style="width: 100%;"><?php echo esc_textarea( $social ); ?></textarea>
+			<small><?php esc_html_e( 'Enter one URL per line (e.g., Instagram, Twitter, Facebook links)', 'mansa-core' ); ?></small>
+		</p>
+		<?php
+	}
+
+	/**
+	 * Save brand meta.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return void
+	 */
+	protected function save_brand_meta( $post_id ) {
+		// Founder story.
+		if ( isset( $_POST['mansa_brand_founder_story'] ) ) {
+			$founder_story = wp_kses_post( wp_unslash( $_POST['mansa_brand_founder_story'] ) );
+			update_post_meta( $post_id, '_mansa_brand_founder_story', $founder_story );
+		}
+
+		// Website URL.
+		if ( isset( $_POST['mansa_brand_website'] ) ) {
+			$website = esc_url_raw( wp_unslash( $_POST['mansa_brand_website'] ) );
+			update_post_meta( $post_id, '_mansa_brand_website', $website );
+		}
+
+		// Social links.
+		if ( isset( $_POST['mansa_brand_social'] ) ) {
+			$social = sanitize_textarea_field( wp_unslash( $_POST['mansa_brand_social'] ) );
+			update_post_meta( $post_id, '_mansa_brand_social', $social );
+		}
 	}
 }

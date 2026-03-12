@@ -7,6 +7,7 @@
 
 namespace Mansa\Taxonomies;
 
+use Mansa\PostTypes\BrandPostType;
 use Mansa\PostTypes\ProductPostType;
 
 /**
@@ -52,7 +53,7 @@ class OriginTaxonomy {
 
 		register_taxonomy(
 			self::TAXONOMY,
-			array( ProductPostType::POST_TYPE ),
+			array( ProductPostType::POST_TYPE, BrandPostType::POST_TYPE ),
 			$args
 		);
 	}
