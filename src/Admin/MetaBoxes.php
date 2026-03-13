@@ -38,7 +38,38 @@ class MetaBoxes {
 	public function __construct() {
 		$this->product_brand_relation = new ProductBrandRelation();
 		$this->article_relations      = new ArticleRelations();
+
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_editor_scripts' ) );
 	}
+
+	/**
+	 * Enqueue editor scripts for metaboxes.
+	 *
+	 * @param string $hook The current admin page hook.
+	 * @return void
+	 */
+	public function enqueue_editor_scripts( $hook ) {
+		if ( 'post.php' !== $hook && 'post-new.php' !== $hook ) {
+			return;
+		}
+
+		// Check if we're on the brand post type edit page.
+		if ( isset( $_GET['post'] ) ) {
+			$post_type = get_post_type( absint( $_GET['post'] ) );
+		} elseif ( isset( $_GET['post_type'] ) ) {
+			$post_type = sanitize_key( $_GET['post_type'] );
+		} else {
+			return;
+		}
+
+		if ( BrandPostType::POST_TYPE !== $post_type ) {
+			return;
+		}
+
+		wp_enqueue_editor();
+		wp_enqueue_media();
+	}
+
 
 	/**
 	 * Add meta boxes.
@@ -355,8 +386,14 @@ class MetaBoxes {
 	public function render_brand_founder_story_meta_box( $post ) {
 		wp_nonce_field( 'mansa_save_meta', 'mansa_meta_nonce' );
 		$founder_story = get_post_meta( $post->ID, '_mansa_brand_founder_story', true );
-		wp_editor( $founder_story, 'mansa_brand_founder_story', array(
+
+		// Use the Quicktags editor (code view) to avoid TinyMCE initialization issues inside a metabox.
+		// Keep the textarea name the same so the value is saved correctly.
+		wp_editor( $founder_story, 'mansa_brand_founder_story_editor', array(
+			'textarea_name' => 'mansa_brand_founder_story',
 			'textarea_rows' => 6,
+			'tinymce'       => false,
+			'quicktags'     => true,
 			'media_buttons' => true,
 		) );
 	}
