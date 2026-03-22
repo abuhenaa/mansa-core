@@ -1,0 +1,59 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "mansa-core/category-grid",
+  "version": "0.1.0",
+  "title": "Mansa Category Grid",
+  "category": "widgets",
+  "icon": "grid-view",
+  "description": "Display categories in a grid layout with icons.",
+  "attributes": {
+    "sectionTitle": {
+      "type": "string",
+      "default": "Explore Categories"
+    },
+    "categories": {
+      "type": "array",
+      "default": [
+        {
+          "name": "Food & Drink",
+          "icon": "food",
+          "link": "#"
+        },
+        {
+          "name": "Beauty & Personal Care",
+          "icon": "beauty",
+          "link": "#"
+        },
+        {
+          "name": "Home & Lifestyle",
+          "icon": "home",
+          "link": "#"
+        },
+        {
+          "name": "Fashion & Textiles",
+          "icon": "fashion",
+          "link": "#"
+        }
+      ]
+    }
+  },
+  "supports": {
+    "html": false,
+    "color": {
+      "text": true,
+      "background": true
+    },
+    "typography": {
+      "fontSize": true,
+      "fontStyle": true,
+      "fontFamily": true,
+      "lineHeight": true
+    }
+  },
+  "textdomain": "mansa-core",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./editor.scss",
+  "style": "file:./style.scss",
+  "render": "file:./render.php"
+}

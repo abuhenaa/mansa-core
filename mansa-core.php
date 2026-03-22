@@ -51,3 +51,30 @@ add_action(
 	},
 	0
 );
+
+/**
+ * Register all Gutenberg blocks
+ */
+function mansa_core_register_blocks() {
+    // Register Featured Discovery block
+    register_block_type( MANSA_CORE_PATH . 'build/featured-discovery' );
+    
+    // Register Category Grid block
+    register_block_type( MANSA_CORE_PATH . 'build/category-grid' );
+    
+    // Register Featured Brand block
+    register_block_type( MANSA_CORE_PATH . 'build/featured-brand' );
+    
+    // Register Community Newsletter block
+    register_block_type( MANSA_CORE_PATH . 'build/community-newsletter' );
+}
+add_action( 'init', 'mansa_core_register_blocks' );
+
+/**
+ * Initialize assets handler
+ */
+function mansa_core_init_assets() {
+    require_once MANSA_CORE_PATH . 'includes/class-assets.php';
+    new \Mansa\Core\Assets();
+}
+add_action( 'plugins_loaded', 'mansa_core_init_assets' );

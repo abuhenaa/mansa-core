@@ -1,0 +1,58 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "mansa-core/community-newsletter",
+	"version": "0.1.0",
+	"title": "Mansa Community Newsletter",
+	"category": "widgets",
+	"icon": "email-alt",
+	"description": "Display a community newsletter subscription form with WhatsApp link.",
+	"attributes": {
+		"sectionTitle": {
+			"type": "string",
+			"default": "Stay Ahead of What's Next"
+		},
+		"sectionDescription": {
+			"type": "string",
+			"default": "Receive curated discoveries, product highlights, and emerging brands."
+		},
+		"placeholderText": {
+			"type": "string",
+			"default": "Your email address"
+		},
+		"buttonText": {
+			"type": "string",
+			"default": "Subscribe"
+		},
+		"whatsappText": {
+			"type": "string",
+			"default": "Join our WhatsApp Community — Get weekly curated product discoveries"
+		},
+		"whatsappUrl": {
+			"type": "string",
+			"default": "#"
+		},
+		"actionUrl": {
+			"type": "string",
+			"default": ""
+		}
+	},
+	"supports": {
+		"html": false,
+		"color": {
+			"text": true,
+			"background": true
+		},
+		"typography": {
+			"fontSize": true,
+			"fontStyle": true,
+			"fontFamily": true,
+			"lineHeight": true
+		}
+	},
+	"textdomain": "mansa-core",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./editor.scss",
+	"style": "file:./style.scss",
+	"render": "file:./render.php"
+}

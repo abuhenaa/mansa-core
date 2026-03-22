@@ -1,0 +1,56 @@
+/**
+ * Category Grid Block Editor Styles
+ */
+
+.wp-block-mansa-core-category-grid {
+    border: 1px dashed #ddd;
+    padding: 20px;
+    
+    .grid-4 {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+    }
+    
+    .cat-card {
+        background: var(--card, #fff);
+        border-radius: var(--radius, 8px);
+        padding: 2rem;
+        text-align: center;
+        box-shadow: var(--shadow-card, 0 4px 6px -1px rgb(0 0 0 / 0.1));
+        transition: box-shadow 0.3s, transform 0.3s;
+        cursor: pointer;
+        
+        &:hover {
+            box-shadow: var(--shadow-card-hover, 0 10px 15px -3px rgb(0 0 0 / 0.1));
+            transform: translateY(-2px);
+        }
+    }
+    
+    .cat-icon {
+        width: 3.5rem;
+        height: 3.5rem;
+        border-radius: 50%;
+        background: var(--secondary, #f9fafb);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.25rem;
+        
+        svg {
+            width: 1.5rem;
+            height: 1.5rem;
+            stroke: var(--fg, #111827);
+            fill: none;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+    }
+    
+    .cat-card h3 {
+        font-size: 1.05rem;
+        font-weight: 500;
+        margin: 0;
+    }
+}

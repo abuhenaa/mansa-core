@@ -1,0 +1,58 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "mansa-core/featured-brand",
+	"version": "0.1.0",
+	"title": "Mansa Featured Brand",
+	"category": "widgets",
+	"icon": "star-filled",
+	"description": "Display a featured brand with image and description.",
+	"attributes": {
+		"sectionTitle": {
+			"type": "string",
+			"default": "Featured Brand"
+		},
+		"brandName": {
+			"type": "string",
+			"default": "Terra & Ember"
+		},
+		"brandLabel": {
+			"type": "string",
+			"default": "Brand Spotlight"
+		},
+		"brandDescription": {
+			"type": "string",
+			"default": "Born in a small workshop in Oaxaca, Terra & Ember crafts homeware from locally sourced clay and reclaimed wood. Every piece carries the warmth of hands that shaped it — honest, intentional, and built to last generations."
+		},
+		"brandImage": {
+			"type": "object",
+			"default": null
+		},
+		"buttonText": {
+			"type": "string",
+			"default": "Explore Brand"
+		},
+		"buttonUrl": {
+			"type": "string",
+			"default": "#"
+		}
+	},
+	"supports": {
+		"html": false,
+		"color": {
+			"text": true,
+			"background": true
+		},
+		"typography": {
+			"fontSize": true,
+			"fontStyle": true,
+			"fontFamily": true,
+			"lineHeight": true
+		}
+	},
+	"textdomain": "mansa-core",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./editor.scss",
+	"style": "file:./style.scss",
+	"render": "file:./render.php"
+}

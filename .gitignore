@@ -3,3 +3,18 @@
 
 #node modules
 /node_modules/
+
+write what other files should be ignored here
+#log files*.log
+*.log
+#OS generated files.DS_Store
+Thumbs.db
+.DS_Store
+#IDE files
+.idea/
+.vscode/
+#WordPress core files
+/wp-admin/
+/wp-includes/
+/wp-content/
+

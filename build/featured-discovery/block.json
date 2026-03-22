@@ -1,0 +1,47 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "create-block/featured-discovery",
+  "version": "0.1.0",
+  "title": "Mansa Featured Discovery",
+  "category": "widgets",
+  "icon": "smiley",
+  "description": "A block to display featured discovery content based on the current post's categories or tags.",
+  "example": {},
+  "attributes": {
+    "postType": {
+      "type": "string",
+      "default": "post"
+    },
+    "postsPerPage": {
+      "type": "number",
+      "default": 3
+    },
+    "sectionTitle": {
+      "type": "string",
+      "default": "Featured Discovery"
+    },
+    "sectionDescription": {
+      "type": "string",
+      "default": "Curated insights from our latest guides."
+    }
+  },
+  "supports": {
+    "html": false,
+    "color": {
+      "text": true,
+      "background": true
+    },
+    "typography": {
+      "fontSize": true,
+      "fontStyle": true,
+      "fontFamily": true,
+      "lineHeight": true
+    }
+  },
+  "textdomain": "mansa-core",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./editor.scss",
+  "style": "file:./style.scss",
+  "render": "file:./render.php"
+}

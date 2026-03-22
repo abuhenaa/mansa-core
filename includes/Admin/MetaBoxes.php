@@ -214,6 +214,7 @@ class MetaBoxes {
 	 * @return void
 	 */
 	public function render_article_products_meta_box( $post ) {
+		wp_nonce_field( 'mansa_save_meta', 'mansa_meta_nonce' );
 		$current_products = $this->article_relations->get_related_products( $post->ID );
 
 		$products = get_posts(
@@ -245,6 +246,7 @@ class MetaBoxes {
 	 * @return void
 	 */
 	public function render_article_brands_meta_box( $post ) {
+		wp_nonce_field( 'mansa_save_meta', 'mansa_meta_nonce' );
 		$current_brands = $this->article_relations->get_related_brands( $post->ID );
 
 		$brands = get_posts(
