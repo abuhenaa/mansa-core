@@ -49,30 +49,8 @@ class Assets {
             MANSA_CORE_VERSION
         );
         
-        // Manually enqueue block styles if auto-loading isn't working
-        $blocks = ['featured-discovery', 'category-grid', 'featured-brand', 'community-newsletter'];
-        
-        foreach ($blocks as $block) {
-            // Frontend styles
-            if (file_exists(MANSA_CORE_PATH . "build/{$block}/style-index.css")) {
-                wp_enqueue_style(
-                    "mansa-core-{$block}-style",
-                    MANSA_CORE_URL . "build/{$block}/style-index.css",
-                    ['mansa-core-variables'],
-                    MANSA_CORE_VERSION
-                );
-            }
-            
-            // Editor styles
-            if (is_admin() && file_exists(MANSA_CORE_PATH . "build/{$block}/index.css")) {
-                wp_enqueue_style(
-                    "mansa-core-{$block}-editor",
-                    MANSA_CORE_URL . "build/{$block}/index.css",
-                    ['mansa-core-variables'],
-                    MANSA_CORE_VERSION
-                );
-            }
-        }
+        // WordPress should automatically load block styles from block.json
+        // No manual enqueueing needed - let WordPress handle it
     }
 
     /**
