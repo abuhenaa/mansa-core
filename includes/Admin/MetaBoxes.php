@@ -136,6 +136,23 @@ class MetaBoxes {
 			'side',
 			'default'
 		);
+
+		// Ad Placements #1 and #2.
+		$ad_post_types = array(
+			ProductPostType::POST_TYPE,
+			BrandPostType::POST_TYPE,
+			ArticlePostType::POST_TYPE,
+		);
+		foreach ( $ad_post_types as $pt ) {
+			add_meta_box(
+				'mansa_ad_placements',
+				__( 'Ad Placements', 'mansa-core' ),
+				array( $this, 'render_ad_placements_meta_box' ),
+				$pt,
+				'side',
+				'default'
+			);
+		}
 	}
 
 	/**
@@ -162,6 +179,9 @@ class MetaBoxes {
 		}
 
 		$post_type = get_post_type( $post_id );
+
+		// Save Ad Placements across all supported post types.
+		$this->save_ad_placements( $post_id );
 
 		if ( ProductPostType::POST_TYPE === $post_type ) {
 			$this->save_product_brand( $post_id );
@@ -445,6 +465,55 @@ class MetaBoxes {
 		if ( isset( $_POST['mansa_brand_social'] ) ) {
 			$social = sanitize_textarea_field( wp_unslash( $_POST['mansa_brand_social'] ) );
 			update_post_meta( $post_id, '_mansa_brand_social', $social );
+		}
+	}
+
+	/**
+	 * Render Ad Placements meta box.
+	 *
+	 * @param \WP_Post $post Post object.
+	 * @return void
+	 */
+	public function render_ad_placements_meta_box( $post ) {
+		wp_nonce_field( 'mansa_save_meta', 'mansa_meta_nonce' );
+
+		$ad_1 = get_post_meta( $post->ID, '_mansa_ad_placement_1', true );
+		$ad_2 = get_post_meta( $post->ID, '_mansa_ad_placement_2', true );
+		?>
+		<p>
+			<label for="mansa_ad_placement_1"><strong><?php esc_html_e( 'Ad Placement #1', 'mansa-core' ); ?></strong></label>
+			<textarea id="mansa_ad_placement_1" name="mansa_ad_placement_1" rows="4" style="width: 100%; font-family: monospace; font-size: 12px;" placeholder="<?php esc_attr_e( 'HTML, image tag, iframe, or shortcode...', 'mansa-core' ); ?>"><?php echo esc_textarea( $ad_1 ); ?></textarea>
+		</p>
+		<p>
+			<label for="mansa_ad_placement_2"><strong><?php esc_html_e( 'Ad Placement #2', 'mansa-core' ); ?></strong></label>
+			<textarea id="mansa_ad_placement_2" name="mansa_ad_placement_2" rows="4" style="width: 100%; font-family: monospace; font-size: 12px;" placeholder="<?php esc_attr_e( 'HTML, image tag, iframe, or shortcode...', 'mansa-core' ); ?>"><?php echo esc_textarea( $ad_2 ); ?></textarea>
+		</p>
+		<p class="description">
+			<?php esc_html_e( 'Leave empty to hide the ad spot completely on the front-end.', 'mansa-core' ); ?>
+		</p>
+		<?php
+	}
+
+	/**
+	 * Save Ad Placements meta.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return void
+	 */
+	protected function save_ad_placements( $post_id ) {
+		if ( isset( $_POST['mansa_ad_placement_1'] ) ) {
+			// Admins can insert arbitrary HTML/embed code; non-admins filtered with kses.
+			$ad_1 = current_user_can( 'unfiltered_html' )
+				? wp_unslash( $_POST['mansa_ad_placement_1'] )
+				: wp_kses_post( wp_unslash( $_POST['mansa_ad_placement_1'] ) );
+			update_post_meta( $post_id, '_mansa_ad_placement_1', $ad_1 );
+		}
+
+		if ( isset( $_POST['mansa_ad_placement_2'] ) ) {
+			$ad_2 = current_user_can( 'unfiltered_html' )
+				? wp_unslash( $_POST['mansa_ad_placement_2'] )
+				: wp_kses_post( wp_unslash( $_POST['mansa_ad_placement_2'] ) );
+			update_post_meta( $post_id, '_mansa_ad_placement_2', $ad_2 );
 		}
 	}
 }
