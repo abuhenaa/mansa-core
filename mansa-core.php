@@ -3,7 +3,7 @@
  * Plugin Name: Mansa Core
  * Plugin URI: https://mansa.local
  * Description: Core CMS architecture for Mansa Market content discovery platform
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Abu Hena
  * Author URI: https://github.com/abuhenaa
  * License: GPL v2 or later

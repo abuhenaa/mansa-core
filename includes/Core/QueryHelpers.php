@@ -43,6 +43,18 @@ class QueryHelpers {
 	}
 
 	/**
+	 * Get article IDs related to a specific product.
+	 *
+	 * @param int $product_id Product ID.
+	 * @return array Array of article IDs.
+	 */
+	public static function get_articles_by_product( $product_id ) {
+		$relations = new ArticleRelations();
+
+		return $relations->get_articles_by_product( $product_id );
+	}
+
+	/**
 	 * Get articles related to specific brands.
 	 *
 	 * @param array $brand_ids Array of brand IDs.
@@ -52,6 +64,18 @@ class QueryHelpers {
 		$relations = new ArticleRelations();
 
 		return $relations->query_articles_by_brands( $brand_ids );
+	}
+
+	/**
+	 * Get article IDs related to a specific brand.
+	 *
+	 * @param int $brand_id Brand ID.
+	 * @return array Array of article IDs.
+	 */
+	public static function get_articles_by_brand( $brand_id ) {
+		$relations = new ArticleRelations();
+
+		return $relations->get_articles_by_brand( $brand_id );
 	}
 
 	/**
@@ -105,5 +129,30 @@ class QueryHelpers {
 			'products' => $relations->get_related_products( $article_id ),
 			'brands'   => $relations->get_related_brands( $article_id ),
 		);
+	}
+
+	/**
+	 * Get manually selected products for a specific brand.
+	 *
+	 * @param int   $brand_id Brand ID.
+	 * @param array $args     Additional WP_Query args.
+	 * @return \WP_Query
+	 */
+	public static function get_selected_products_by_brand( $brand_id, $args = array() ) {
+		$relation = new ProductBrandRelation();
+
+		return $relation->query_selected_products( $brand_id, $args );
+	}
+
+	/**
+	 * Get manually selected product IDs for a specific brand.
+	 *
+	 * @param int $brand_id Brand ID.
+	 * @return array Array of product IDs.
+	 */
+	public static function get_brand_selected_product_ids( $brand_id ) {
+		$relation = new ProductBrandRelation();
+
+		return $relation->get_selected_products( $brand_id );
 	}
 }

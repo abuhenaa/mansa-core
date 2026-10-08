@@ -43,11 +43,26 @@ class ArticleRelations {
 	}
 
 	/**
-	 * set related articles for product
+	 * Get related articles for a post (product or brand).
+	 *
+	 * @param int $post_id Post ID.
+	 * @return array Array of article IDs.
 	 */
-	public function set_related_articles( $article_id, $related_article_ids ) {
-		$sanitized_ids = array_map( 'absint', (array) $related_article_ids );
-		return update_post_meta( $article_id, self::META_KEY_ARTICLES, $sanitized_ids );
+	public function get_related_articles( $post_id ) {
+		$article_ids = get_post_meta( $post_id, self::META_KEY_ARTICLES, true );
+		return is_array( $article_ids ) ? array_values( array_map( 'absint', array_filter( $article_ids ) ) ) : array();
+	}
+
+	/**
+	 * Set related articles for a post (product or brand).
+	 *
+	 * @param int   $post_id             Post ID.
+	 * @param array $related_article_ids Array of article IDs.
+	 * @return bool|int
+	 */
+	public function set_related_articles( $post_id, $related_article_ids ) {
+		$sanitized_ids = array_map( 'absint', array_filter( (array) $related_article_ids ) );
+		return update_post_meta( $post_id, self::META_KEY_ARTICLES, array_values( array_unique( $sanitized_ids ) ) );
 	}
 
 	/**
@@ -86,14 +101,67 @@ class ArticleRelations {
 	}
 
 	/**
-	 * Get articles that reference a given product.
+	 * Get articles that reference or are related to a given product.
 	 *
 	 * @param int $product_id Product ID.
 	 * @return int[]
 	 */
 	public function get_articles_by_product( $product_id ) {
-		$query = $this->query_articles_by_products( array( $product_id ), array( 'fields' => 'ids', 'posts_per_page' => -1 ) );
-		return $query->have_posts() ? $query->posts : array();
+		$product_id  = absint( $product_id );
+		$article_ids = $this->get_related_articles( $product_id );
+
+		global $wpdb;
+		if ( $wpdb ) {
+			$reverse_article_ids = $wpdb->get_col(
+				$wpdb->prepare(
+					"SELECT post_id FROM {$wpdb->postmeta}
+					WHERE meta_key = %s
+					AND (meta_value = %d OR meta_value LIKE %s OR meta_value LIKE %s)",
+					self::META_KEY_PRODUCTS,
+					$product_id,
+					'%' . $wpdb->esc_like( 'i:' . $product_id . ';' ) . '%',
+					'%' . $wpdb->esc_like( '"' . $product_id . '"' ) . '%'
+				)
+			);
+
+			if ( ! empty( $reverse_article_ids ) ) {
+				$article_ids = array_merge( $article_ids, array_map( 'absint', $reverse_article_ids ) );
+			}
+		}
+
+		return array_values( array_unique( array_filter( $article_ids ) ) );
+	}
+
+	/**
+	 * Get articles that reference or are related to a given brand.
+	 *
+	 * @param int $brand_id Brand ID.
+	 * @return int[]
+	 */
+	public function get_articles_by_brand( $brand_id ) {
+		$brand_id    = absint( $brand_id );
+		$article_ids = $this->get_related_articles( $brand_id );
+
+		global $wpdb;
+		if ( $wpdb ) {
+			$reverse_article_ids = $wpdb->get_col(
+				$wpdb->prepare(
+					"SELECT post_id FROM {$wpdb->postmeta}
+					WHERE meta_key = %s
+					AND (meta_value = %d OR meta_value LIKE %s OR meta_value LIKE %s)",
+					self::META_KEY_BRANDS,
+					$brand_id,
+					'%' . $wpdb->esc_like( 'i:' . $brand_id . ';' ) . '%',
+					'%' . $wpdb->esc_like( '"' . $brand_id . '"' ) . '%'
+				)
+			);
+
+			if ( ! empty( $reverse_article_ids ) ) {
+				$article_ids = array_merge( $article_ids, array_map( 'absint', $reverse_article_ids ) );
+			}
+		}
+
+		return array_values( array_unique( array_filter( $article_ids ) ) );
 	}
 
 	/**
@@ -104,10 +172,28 @@ class ArticleRelations {
 	 * @return \WP_Query
 	 */
 	public function query_articles_by_products( $product_ids, $args = array() ) {
+		$all_article_ids = array();
+		foreach ( (array) $product_ids as $pid ) {
+			$all_article_ids = array_merge( $all_article_ids, $this->get_articles_by_product( $pid ) );
+		}
+		$all_article_ids = array_values( array_unique( array_filter( $all_article_ids ) ) );
+
+		if ( empty( $all_article_ids ) ) {
+			return new \WP_Query(
+				array(
+					'post_type'      => ArticlePostType::POST_TYPE,
+					'post__in'       => array( 0 ),
+					'posts_per_page' => isset( $args['posts_per_page'] ) ? $args['posts_per_page'] : -1,
+				)
+			);
+		}
+
 		$defaults = array(
 			'post_type'      => ArticlePostType::POST_TYPE,
-			'posts_per_page' => -1
-			);
+			'post__in'       => $all_article_ids,
+			'orderby'        => 'post__in',
+			'posts_per_page' => -1,
+		);
 
 		$query_args = wp_parse_args( $args, $defaults );
 
@@ -122,16 +208,27 @@ class ArticleRelations {
 	 * @return \WP_Query
 	 */
 	public function query_articles_by_brands( $brand_ids, $args = array() ) {
+		$all_article_ids = array();
+		foreach ( (array) $brand_ids as $bid ) {
+			$all_article_ids = array_merge( $all_article_ids, $this->get_articles_by_brand( $bid ) );
+		}
+		$all_article_ids = array_values( array_unique( array_filter( $all_article_ids ) ) );
+
+		if ( empty( $all_article_ids ) ) {
+			return new \WP_Query(
+				array(
+					'post_type'      => ArticlePostType::POST_TYPE,
+					'post__in'       => array( 0 ),
+					'posts_per_page' => isset( $args['posts_per_page'] ) ? $args['posts_per_page'] : -1,
+				)
+			);
+		}
+
 		$defaults = array(
 			'post_type'      => ArticlePostType::POST_TYPE,
+			'post__in'       => $all_article_ids,
+			'orderby'        => 'post__in',
 			'posts_per_page' => -1,
-			'meta_query'     => array(
-				array(
-					'key'     => self::META_KEY_BRANDS,
-					'value'   => $brand_ids,
-					'compare' => 'IN',
-				),
-			),
 		);
 
 		$query_args = wp_parse_args( $args, $defaults );
